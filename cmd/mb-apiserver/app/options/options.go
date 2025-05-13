@@ -38,25 +38,25 @@ func NewServerOptions() *ServerOptions {
 // AddFlags 将 ServerOptions 的选项绑定到命令行标志.
 // 通过使用 pflag 包，可以实现从命令行中解析这些选项的功能.
 // 这里设置的信息都可以通过 -h 访问.
-func (receiver *ServerOptions) AddFlags(fs *pflag.FlagSet) {
-	fs.StringVar(&receiver.ServerMode, "server-mode", receiver.ServerMode, fmt.Sprintf("Server mode, available options: %v", availableServerModes.UnsortedList()))
-	fs.StringVar(&receiver.JWTKey, "jwt-key", receiver.JWTKey, "JWT signing key. Must be at least 6 characters long.")
-	fs.DurationVar(&receiver.Expiration, "expiration", receiver.Expiration, "The expiration duration of JWT tokens.")
+func (s *ServerOptions) AddFlags(fs *pflag.FlagSet) {
+	fs.StringVar(&s.ServerMode, "server-mode", s.ServerMode, fmt.Sprintf("Server mode, available options: %v", availableServerModes.UnsortedList()))
+	fs.StringVar(&s.JWTKey, "jwt-key", s.JWTKey, "JWT signing key. Must be at least 6 characters long.")
+	fs.DurationVar(&s.Expiration, "expiration", s.Expiration, "The expiration duration of JWT tokens.")
 }
 
 // Validate 校验 ServerOptions 中的选项是否合法.
-func (receiver *ServerOptions) Validate() error {
+func (s *ServerOptions) Validate() error {
 	errs := []error{}
 
 	// 校验 ServerMode 是否有效s
 	// fmt.Errorf 一般用于需要插入动态内容时
-	if !availableServerModes.Has(receiver.ServerMode) {
+	if !availableServerModes.Has(s.ServerMode) {
 		errs = append(errs, fmt.Errorf("invalid server mode: must be one of %v", availableServerModes.UnsortedList()))
 	}
 
 	// 校验 JWTKey 长度
 	// errors.New 一般用于不需要嵌入动态内容时, 性能更高
-	if len(receiver.JWTKey) < 6 {
+	if len(s.JWTKey) < 6 {
 		errs = append(errs, errors.New("JWTKey must be at least 6 characters long"))
 	}
 
